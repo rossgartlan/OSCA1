@@ -10,10 +10,19 @@
 #define minAscii 33
 #define maxAscii 126
 #define memMin 512
+#define bytesPerFrame 256
+#define OFFSET_BITS 8
+
+//16 bit page frame number
+unsigned short pfn = 0x32;
+unsigned short offset = 0xAB;
+
+
 
 int randomNum();
 unsigned short allocateMemory();
 int randomAscii();
+void constructPhysicalAddress();
 
 int main() {
 
@@ -32,7 +41,7 @@ int main() {
 
    int num = randomNum();
    int ranAscii = randomAscii(mem,num);
-
+   constructPhysicalAddress();
    return 0;
 }
 
@@ -58,6 +67,13 @@ int randomAscii(unsigned short *mem,int num){
    printf("%d\n", asciiNum);
    return asciiNum;
 }
+
+void constructPhysicalAddress(){
+    unsigned short address = pfn << OFFSET_BITS;
+    address |= offset;
+    printf("PFN: 0x%x and offset: 0x%x = address: 0x%x\n", pfn, offset, address);
+}
+
 
 //unsigned short alllocateMemory(){
 

@@ -1,6 +1,3 @@
-
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "lib/my-functions.h"
@@ -12,37 +9,34 @@
 #define minAscii 33
 #define maxAscii 126
 #define memMin 512
-#define bytesPerFrame 256
+#define bytesPerFrame 2
 #define OFFSET_BITS 8
+#define pageTableSizeBytes 512
+#define pageSize 256
+
 
 //16 bit page frame number
 unsigned short pfn = 0x32;
 unsigned short offset = 0xAB;
 
-
-
 int randomNum();
 unsigned short allocateMemory();
-int randomAscii();
+void randomAscii();
 void constructPhysicalAddress();
+void writeToPageTable();
 
 int main() {
 
-   //unsigned short *mem;
-   //mem = allocateMemory();
    unsigned short *mem;
    mem  =  (unsigned short*)malloc(sizeof(allocated));
 
-   if(mem == NULL){
-       printf("couldnt allocate memory\n");
-   }
-   else{
-       printf("Memory allocation sucessfull\n");
-   }
-
-
+   // gets a random number 2048-20480 bytes and assigns to memory
    int num = randomNum();
-   int ranAscii = randomAscii(mem,num);
+   // writes a one character ascii to the block of memory allocated
+   randomAscii(mem,num);
+   // writes a page table to the first 512 bytes of the page table
+   int tableSize = sizeof(pageTableSizeBytes);
+   writeToPageTable(mem,tableSize);
    constructPhysicalAddress();
    return 0;
 }
@@ -55,25 +49,48 @@ int randomNum(){
    return assigned;
 }
 
-int randomAscii(unsigned short *mem,int num){
-   // Randomly create a number between 33 and 126
+void randomAscii(unsigned short *mem,int num){
+   // Randomly create a number between 33 and 126 that is the equivilant of 1 char in ascii table
+   char values[num];
+   // Print the memory alocated to a text file
    srand(time(0));
    // populate memory array with characters
    for(int i = memMin; i < num ; i ++){
       int asciiNum = rand() % (maxAscii- minAscii + 1) + minAscii;
       char c = asciiNum;
-      printf("%c",c);
+      //printf("%c",c);
       mem[i]=c;
-   } \
-   int asciiNum = rand() % (maxAscii- minAscii + 1) + minAscii;
-   printf("%d\n", asciiNum);
-   return asciiNum;
+      values[i]=c;
+   }
+   // Print the memory alocated to a text file
+   int frameNum=2;
+   int count = 0;
+   FILE *f;
+   f  = fopen("data/physical_memory.txt", "w");
+   fprintf(f,"      Address       |       Frame     |    Content \n");
+   fprintf(f,"----------------------------------------------------\n");
+   for(int i = memMin; i < num; i ++){
+     //if(mem[i] != 0){
+     if(count < pageSize){
+       fprintf(f,"%s %p %s %d %s %c \n"," ",&mem[i],"           ",frameNum,"             ",values[i]);
+       count ++;
+     }
+     else{
+       count = 0;
+       frameNum ++;
+    }
+  }
 }
 
 void constructPhysicalAddress(){
     unsigned short address = pfn << OFFSET_BITS;
     address |= offset;
     printf("PFN: 0x%x and offset: 0x%x = address: 0x%x\n", pfn, offset, address);
+}
+
+void writeToPageTable(unsigned short *mem, int tableSize){
+
+
 }
 
 

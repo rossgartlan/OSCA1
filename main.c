@@ -25,6 +25,7 @@ void randomAscii();
 void constructPhysicalAddress();
 void writeToPageTable();
 
+
 int main() {
 
    unsigned short *mem;
@@ -89,22 +90,22 @@ void constructPhysicalAddress(){
 }
 
 void writeToPageTable(unsigned short *mem, int tableSize){
+   // This is creating the page table for a single process
+   FILE *f;
+   f  = fopen("data/page_table.txt", "w");
+   fprintf(f,"   Page   | Page Table Entry |\n");
+   fprintf(f,"------------------------------\n");
 
-
+   for(int i = 0; i < pageSize; i++){
+     mem[i]= ("%02x", i);
+     fprintf(f, "%s %02x %s %02x\n", "   ", i, "          " , i + 2);
+    }
+    // Now adding 2 values to the page table which are not in physical memory
+    fprintf(f,"  Pages not stored in memory  \n");
+    fprintf(f,"------------------------------\n");
+    for(int i = pageSize;i < pageSize +2 ; i ++){
+       fprintf(f, "%s %02x %s %s", "   ", i, "        " , " Disk\n");
+    }
 }
 
 
-//unsigned short alllocateMemory(){
-
-//  unsigned short *mem; 
-//    mem  =  (unsigned short*)malloc(sizeof(allocated));
-
- //   if(mem == NULL){
-//        printf("couldnt allocate memory\n");
- //   }
- //   else{
-  //      printf("Memory allocation sucessfull\n");
-  //  }
- //   return mem;
-
-//}

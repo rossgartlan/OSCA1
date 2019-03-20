@@ -16,21 +16,20 @@
 
 
 //16 bit page frame number
-unsigned short pfn = 0x32;
-unsigned short offset = 0xAB;
+//unsigned short pfn = 0x32;
+//unsigned short offset = 0xAB;
 
 int randomNum();
 unsigned short allocateMemory();
 void randomAscii();
-void constructPhysicalAddress();
 void writeToPageTable();
+void userInputHex();
 
 
 int main() {
 
    unsigned short *mem;
    mem  =  (unsigned short*)malloc(sizeof(allocated));
-
    // gets a random number 2048-20480 bytes and assigns to memory
    int num = randomNum();
    // writes a one character ascii to the block of memory allocated
@@ -38,7 +37,8 @@ int main() {
    // writes a page table to the first 512 bytes of the page table
    int tableSize = sizeof(pageTableSizeBytes);
    writeToPageTable(mem,tableSize);
-   constructPhysicalAddress();
+   userInputHex();
+   
    return 0;
 }
 
@@ -68,25 +68,19 @@ void randomAscii(unsigned short *mem,int num){
    int count = 0;
    FILE *f;
    f  = fopen("data/physical_memory.txt", "w");
-   fprintf(f,"      Address       |       Frame     |    Content \n");
+   fprintf(f,"      Address     |     Frame     |    Content \n");
    fprintf(f,"----------------------------------------------------\n");
    for(int i = memMin; i < num; i ++){
      //if(mem[i] != 0){
      if(count < pageSize){
-       fprintf(f,"%s %p %s %d %s %c \n"," ",&mem[i],"           ",frameNum,"             ",values[i]);
+       fprintf(f,"%s %04x %s %d %s %c \n"," ",i,"\t\t\t",frameNum,"\t\t ",values[i]);
        count ++;
      }
      else{
-       count = 0;
-       frameNum ++;
+      count = 0;
+      frameNum ++;
     }
   }
-}
-
-void constructPhysicalAddress(){
-    unsigned short address = pfn << OFFSET_BITS;
-    address |= offset;
-    printf("PFN: 0x%x and offset: 0x%x = address: 0x%x\n", pfn, offset, address);
 }
 
 void writeToPageTable(unsigned short *mem, int tableSize){
@@ -97,15 +91,31 @@ void writeToPageTable(unsigned short *mem, int tableSize){
    fprintf(f,"------------------------------\n");
 
    for(int i = 0; i < pageSize; i++){
-     mem[i]= ("%02x", i);
-     fprintf(f, "%s %02x %s %02x\n", "   ", i, "          " , i + 2);
+     mem[i] = i;
+     fprintf(f, "%s %02x %s %02x\n", "   ", i, "\t\t " , i+2);
     }
     // Now adding 2 values to the page table which are not in physical memory
     fprintf(f,"  Pages not stored in memory  \n");
     fprintf(f,"------------------------------\n");
     for(int i = pageSize;i < pageSize +2 ; i ++){
-       fprintf(f, "%s %02x %s %s", "   ", i, "        " , " Disk\n");
+       fprintf(f, "%s %02x %s %s", "   ", i, "\t\t" , " Disk\n");
     }
 }
 
+void userInputHex(){
+    unsigned int value;
+    printf("Enter an Address value in hexidecimal form without 0x: \n ");
+    scanf("%x", &value);
+    printf("Value = 0x%x\n",value);
+    printf("The first step is to split the address into 2 parts \nits Virtual page number and its offset\n");
+
+    unsigned int result = 0;
+    unsigned int divisor = 0;
+    divisor = value / 0x100;
+    printf("divisor this is the equivilant of the page table number: %u\n",divisor);
+    result = value - (0x100 * divisor);
+    printf("Mod this is the equivilant of the offset: %u\n", result);
+    printf("The next step is to look up the page table and find the frame number that the page table maps to\n");
+    
+}
 

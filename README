@@ -5,13 +5,13 @@ The application provides the following functionality.
 
 1. Allocates a block of memory sufficient to store bytes for the full system address space of 65536 bytes
 
-2. Creates a Page Table for a single process. The page table is 512 bytes in size and hold 256 page table entrys each of 2 bytes in size.The page table is stored in the first 512 bytes of memory allocated in step 1
+2. Creates a Page Table for a single process. The page table is 512 bytes in size and hold 256 page table entrys each of 2 bytes in size.The page table is to be stored in the first 512 bytes of memory allocated in step 1. The first 2 page table entries do not map to a frame and map to disk. after that each page maps to a frame that is 2 values above the virtual page number.
 
 3. Randomly written are between 2048 and 20480 bytes of data belonging to the a simulated process previously created. Both the content and locations of these bytes are psudeo randomised
 
-4. Written to file to [your solution]/data/physical_memory.txt which displays the contents of the simulation of physical memory in linear, readable form. Labelled are the memory addresses that arenot used.
+4. Written to file data/physical_memory.txt displays the contents of the simulation of physical memory in linear, readable form. Labelled are the memory addresses that are not used.
 
-5. Written to  file to [your solution]/data/page_table.txtwhich displays the contents of the simulated page tablein linear, readable form.
+5. Written to file data/page_table.txtwhich displays the contents of the simulated page tablein linear, readable form.
 
 6. A user can Add 2 entries to the Page Table which point to pages which are not stored in your simulated physicalmemory, and store content for these pages in the solution’s data folder You should print 1 virtual address from each of these pages, clearly labelled, to the console.
 

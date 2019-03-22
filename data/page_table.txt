@@ -254,5 +254,5 @@
     fb 		  fd
     fc 		  fe
     fd 		  ff
-    fe 		  100
-    ff 		  101
+    fe 		  01
+    ff 		  00

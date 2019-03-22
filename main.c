@@ -77,9 +77,25 @@ void randomAscii(unsigned short *mem,int num){
      else{
       count = 0;
       frameNum ++;
-    } 
-  }
+    }
+   } 
 
+   fflush(f);
+
+   // Write to text file simulated storage 
+   char swapSpace[pageTableSizeBytes];
+   FILE *fn;
+   fn  = fopen("data/swap_space.txt", "w");
+   fprintf(fn,"      Address     |      Content    \n");
+   fprintf(fn,"------------------------------------\n");
+   for(int i = 0; i < pageSize; i++){
+   int asciiNum = rand() % (maxAscii- minAscii + 1) + minAscii;
+   char c = asciiNum;
+   swapSpace[i]=c;
+   fprintf(fn,"%s %02x %s %c\n","\t",i,"\t\t",swapSpace[i]);
+   }
+   fflush(fn);
+   
    unsigned int value;
 
    do{
@@ -115,7 +131,7 @@ void writeToPageTable(unsigned short *mem, int tableSize){
      fprintf(f, "%s %02x %s %s", "   ", i, "\t\t" , " Disk\n");
    }
 
-   // writing to the console human readable form of one page table entry
+   //writing to the console human readable form of one page table entry
    printf("Example of a page table entry printed to the console\n");
    
    for(int i = 2; i < pageSize; i++){
@@ -127,24 +143,7 @@ void writeToPageTable(unsigned short *mem, int tableSize){
         printf("%s %02x %s %02x\n", "   ", i, "\t\t " , i+2);
      }
    }
+   fflush(f);
 }
 
-void userInputHex(unsigned int *mem,int num){
-    unsigned int value;
-    printf("Enter an Address value in hexidecimal form without 0x: \n ");
-    scanf("%x", &value);
-    printf("Value = 0x%x\n",value);
-    printf("The first step is to split the address into 2 parts \nits Virtual page number and its offset\n");
-    unsigned int result = 0;
-    unsigned int divisor = 0;
-    divisor = value / 0x100;
-    printf("divisor this is the equivilant of the page table number: %u\n",divisor);
-    result = value - (0x100 * divisor);
-    printf("Mod this is the equivilant of the offset: %u\n", result);
-    printf("The next step is to look up the page table and find the frame number that the page table maps to\n");
-    unsigned int physicalAddress = 0;
-    physicalAddress = (divisor * 0x100) + result;
-    printf("the physical address is %u\n", physicalAddress);
-    printf("The value of the physical address is %c\n",mem[physicalAddress]);
-    
-}
+

@@ -32,7 +32,6 @@ int main() {
    int num = randomNum();
    // Getting a random offset from the page table to start writing block of mem
    int offsetPT = randomNumOffsetPT();
-   //unsigned short *values;
    // writes a one character ascii to the block of memory allocated
    int tableSize = sizeof(pageTableSizeBytes);
    // writes a page table to the first 512 bytes of the page table
@@ -57,7 +56,6 @@ int randomNumOffsetPT(){
    return assigned;
 }
 
-
 void randomAscii(unsigned short *mem,int num,int offsetPT){
    // Randomly create a number between 33 and 126 that is the equivilant of 1 char in ascii table
    char values[num];
@@ -67,7 +65,6 @@ void randomAscii(unsigned short *mem,int num,int offsetPT){
    for(int i = memMin; i < num ; i ++){
       int asciiNum = rand() % (maxAscii- minAscii + 1) + minAscii;
       char c = asciiNum;
-      //printf("%c",c);
       mem[i]=c;
       values[i]=c;
    }
@@ -79,7 +76,6 @@ void randomAscii(unsigned short *mem,int num,int offsetPT){
    fprintf(f,"      Address     |     Frame     |    Content \n");
    fprintf(f,"-----------------------------------------------\n");
    for(int i = memMin+512; i < num; i ++){
-     //if(mem[i] != 0){
      if(count < pageSize){
        fprintf(f,"%s %04x %s %d %s %c \n"," ",i,"\t\t\t",frameNum,"\t\t ",values[i]);
        count ++;
@@ -113,7 +109,7 @@ void randomAscii(unsigned short *mem,int num,int offsetPT){
       frameSP ++;
     }
    }
-   printf("Console print of sample addresses that point to pages not in physical memory");    
+   printf("Console print of sample addresses that point to pages not in physical memory\n");    
    printf("0x10\n");
    printf("0x101\n");
    
